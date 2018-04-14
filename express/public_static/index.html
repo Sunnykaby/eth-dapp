@@ -43,6 +43,7 @@
     .options,
     .account,
     .buyGood,
+    .trans,
     #all-accounts {
       display: none;
     }
@@ -61,7 +62,7 @@
           <br>
           <h3>You have
             <span class="black">
-              <span id="balance"></span> META</span>
+              <span id="balance"></span> BUY</span>
           </h3>
           <h3>Your Account
             <span class="black" id="account"></span>
@@ -83,7 +84,10 @@
               <button type="button" id="bg" class="btn btn-default">Buy Good</button>
             </div>
             <div class="btn-group" role="group">
-              <button type="button" id="sm" class="btn btn-default">Send Meta</button>
+              <button type="button" id="sm" class="btn btn-default">Send Buy</button>
+            </div>
+            <div class="btn-group" role="group">
+              <button type="button" id="trans" class="btn btn-default">Check Trans</button>
             </div>
           </div>
         </div>
@@ -126,7 +130,7 @@
 
 
           <div id="goodTemplate" style="display: none;">
-            <div class="col-sm-6 col-md-4 col-lg-3">
+            <div class="col-sm-6 col-md-4 col-lg-4">
               <div class="panel panel-default panel-good">
                 <div class="panel-heading">
                   <h3 class="panel-title">Yeasy</h3>
@@ -204,7 +208,7 @@
       <div class="col-md-10 col-md-offset-1">
         <div class="send">
           <br>
-          <h1>Send MetaCoin</h1>
+          <h1>Send BuyCoin</h1>
           <div class="row">
             <div>
               <div class="col-md-12">
@@ -219,7 +223,7 @@
               <div class="col-md-4 col-md-offset-4">
                 <br>
                 <br>
-                <button class="btn btn-primary" id="send">Send MetaCoin</button>
+                <button class="btn btn-primary" id="send">Send BuyCoin</button>
               </div>
               <br>
               <br>
@@ -271,7 +275,7 @@
 
 
             <div id="goodTemplateBuy" style="display: none;">
-              <div class="col-sm-6 col-md-4 col-lg-3">
+              <div class="col-sm-6 col-md-6 col-lg-6">
                 <div class="panel panel-default panel-good">
                   <div class="panel-heading">
                     <h3 class="panel-title">Yeasy</h3>
@@ -313,9 +317,83 @@
             <br>
         </div>
       </div>
+      <!-- Get Transactions -->
+      <div class="col-md-10 col-md-offset-1">
+        <div class="trans">
+          <br>
+          <br>
+          <h1>Get Transactions From Eth Blockchain</h1>
+          <br>
+          <div class="row">
+            <div>
+              <div class="col-md-12">
+                <label for="targetAcc">Transaction ID:</label>
+                <input type="text" id="targetTrans" class="form-control" placeholder="copy and paste from transaction response"
+                  required></input>
+              </div>
+              <div class="col-md-4 col-md-offset-4">
+                <br>
+                <br>
+                <button class="btn btn-primary" id="getTrans">Get Transaction Detail</button>
+              </div>
+            </div>
+          </div>
+          <br>
+          <br>
+          <h1>Transaction Info</h1>
+
+          <div class="row">
+            <div class="col-xs-12 col-sm-8 col-sm-push-2">
+              <hr/>
+              <br/>
+            </div>
+          </div>
+
+          <div id="TransRow" class="row">
+            <!-- Goods LOAD HERE -->
+          </div>
+
+
+          <div id="TransTemplate" style="display: none;">
+            <div class="col-sm-12 col-md-12 col-lg-12">
+              <div class="panel panel-default panel-good">
+                <div class="panel-heading">
+                  <h3 class="panel-title">Transaction ID</h3>
+                </div>
+                <div class="panel-body">
+                  <br/>
+                  <strong>Hash</strong>:
+                  <span class="trans-hash">0x627306090abab3a6e1400e9345bc60c78a8bef57</span>
+                  <br/>
+                  <strong>Block Hash</strong>:
+                  <span class="trans-blk">0xcb6f39df0d23a6e684164de5aed5e98471f9bab0cd4aeae9238f1b9656c358e1</span>
+                  <br/>
+                  <strong>Block Number</strong>:
+                  <span class="trans-blkN"></span>
+                  <br/>
+                  <br/>
+                  <strong>Gas</strong>:
+                  <span class="trans-gas"></span>
+                  <br/>
+                  <br/>
+                  <strong>From Addr</strong>:
+                  <span class="trans-from"></span>
+                  <br/>
+                  <br/>
+                  <strong>To Addr</strong>:
+                  <span class="trans-to"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <br>
+          <br>
+          <br>
+        </div>
+      </div>
       <div class="col-md-10 col-md-offset-1">
         <div id="all-accounts">
-          <h3>Accounts on the chain you can send MetaCoin to:</h3>
+          <h3>Accounts on the chain you can send BuyCoin to:</h3>
           <ol>
 
           </ol>

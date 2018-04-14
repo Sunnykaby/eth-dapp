@@ -105,7 +105,7 @@ app.post('/addGood', upload.single('goodImg'), (req, res, next) => {
     //add The good into the eth
     truffle_connect.addGood(eth_hash, goodInfo.goodPrice, goodInfo.goodOwn, (status)=>{
       console.log(status);
-      res.send({ status: "ok", hashCode:hash });
+      res.send({ status: "ok", hashCode:hash, txid:status.tx });
     });
   }).catch(err =>{
     console.log(err);
@@ -138,9 +138,24 @@ app.post('/buyGood', (req, res, next) => {
   console.log("Convert to eth hash : " + eth_hash);
   truffle_connect.bugGood(owner, eth_hash, currentAcount, function(status){
     console.log(status);
-    res.send({status: status});
+    res.send({status: "Transaction send ok, please check the tx", txid:status.tx});
   });
-})
+});
+
+app.post('/getTrans', (req, res, next) =>{
+  console.log(req.body);
+  let trans = req.body.trans;
+  //convert the ipfs hash to eth bytes32
+  // var eth_hash = helper.ipfsHashToBytes32(trans);
+  // console.log("Convert to eth hash : " + eth_hash);
+  var transObj = truffle_connect.web3.eth.getTransaction(trans);
+  console.log(transObj);
+  res.send(transObj);
+  // truffle_connect.getTrans(trans, function(transObj){
+  //   console.log(transObj);
+  //   res.send({status: "Get Transaction info", tx:transObj});
+  // });
+});
 
 app.listen(port, () => {
 

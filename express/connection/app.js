@@ -75,7 +75,7 @@ module.exports = {
       return meta.addGoodToAddr(goodHash, price, {from: sender});
     }).then(status => {
       console.log(status)
-      callback("Add Goods succ.");
+      callback(status);
     }).catch(function(e){
       console.log(e);
       callback("ADD Goods error," + e.toString());
@@ -113,19 +113,38 @@ module.exports = {
     });
   },
 
-  bugGood: function(_from, goodHash, account,  callback){
+  bugGood: function(_from, goodHash, account, callback){
     var self = this;
     GoodShop.setProvider(self.web3.currentProvider);
     var meta;
     GoodShop.deployed().then(function(instance){
       meta = instance;
-      return meta.buyGood(_from, goodHash, {from:account});
+      return meta.buyGood(_from,goodHash, {from:account});
     }).then(status => {
       console.log(status);
-      callback("Buy Goods tx succ.");
+      callback(status);
     }).catch(function(e){
       console.log(e);
       callback("ADD Goods error," + e.toString());
     });
+  },
+
+  getTrans: function(transaction, callback){
+    var self = this;
+    console.log(transaction);
+    GoodShop.setProvider(self.web3.currentProvider);
+    var transObj = GoodShop.eth.getTransaction(transaction);
+    console.log(transObj);
+    // var meta;
+    // GoodShop.deployed().then(function(instance){
+    //   meta = instance;
+    //   return self.web3.eth.getTransaction(transaction, callback);
+    // }).then(tranObj => {
+    //   console.log(tranObj);
+    //   callback(tranObj);
+    // }).catch(function(e){
+    //   console.log(e);
+    //   callback("Get Transaction error," + e.toString());
+    // });
   }
 }

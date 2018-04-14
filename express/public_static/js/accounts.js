@@ -15,8 +15,17 @@ $(document).ready(function () {
     $('.shop').removeClass('active');
     $('.buyGood').removeClass('active');
     $('.send').removeClass('active');
+    $('.trans').removeClass('active');
     $('#goodOwn').val(selectedAccount);
     console.log(selectedAccount);
+  });
+
+  $('#trans').click(function () {
+    $('.addGood').removeClass('active');
+    $('.shop').removeClass('active');
+    $('.buyGood').removeClass('active');
+    $('.send').removeClass('active');
+    $('.trans').addClass('active');
   });
 
   $('#gl').click(function () {
@@ -24,6 +33,7 @@ $(document).ready(function () {
     $('.shop').addClass('active');
     $('.buyGood').removeClass('active');
     $('.send').removeClass('active');
+    $('.trans').removeClass('active');
     //get goods
     console.log(selectedAccount);
     $.post('/getGood', { account: selectedAccount, owner: selectedAccount }, function (data) {
@@ -51,6 +61,7 @@ $(document).ready(function () {
     $('.shop').removeClass('active');
     $('.buyGood').addClass('active');
     $('.send').removeClass('active');
+    $('.trans').removeClass('active');
   });
 
   $('#sm').click(function () {
@@ -58,6 +69,7 @@ $(document).ready(function () {
     $('.shop').removeClass('active');
     $('.buyGood').removeClass('active');
     $('.send').addClass('active');
+    $('.trans').removeClass('active');
   });
 
   $('#submit').click(function () {
@@ -67,6 +79,7 @@ $(document).ready(function () {
       $('.select').removeClass("active");
       $('.options').addClass("active");
       $('.account').addClass("active");
+      $('.trans').removeClass('active');
       $('#account').text(selectedAccount);
       $('#balance').text(response[0]);
       var current_account_index = response[1].indexOf(selectedAccount);
@@ -86,6 +99,7 @@ $(document).ready(function () {
     $.post('/getBalance', { account: selectedAccount }, function (response) {
       $('.select').removeClass("active");
       $('.send').addClass("active");
+      $('.trans').removeClass('active');
       $('#account').text(selectedAccount);
       $('#balance').text(response[0]);
       var current_account_index = response[1].indexOf(selectedAccount);
@@ -129,9 +143,31 @@ $(document).ready(function () {
         var owner = goodsRow.find('.good-owner').text();
         var goodHash = goodsRow.find('.good-ipfs').text();
         $.post('/buyGood', {account:selectedAccount,owner:targetAcc,goodHash:goodHash}, function(status){
-          alert(JSON.stringify(status));
+          alert(status.status + ". TX id :" + status.txid);
         });
       });
+    });
+  });
+
+  $('#getTrans').click(function () {
+    let targetTrans = $('#targetTrans').val();
+    var TransRow = $('#TransRow');
+      //rm the good
+      TransRow.empty();
+    $.post('/getTrans', { trans: targetTrans}, function (data) {
+      console.log(data);
+      // var goodsRow = $('#GoodsRowBuy');
+      // //rm the good
+      // goodsRow.empty();
+      var transTemp = $('#TransTemplate');
+
+      transTemp.find('.trans-hash').text(data.hash);
+      transTemp.find('.trans-blk').text(data.blockHash);
+      transTemp.find('.trans-blkN').text(data.blockNumber);
+      transTemp.find('.trans-gas').text(data.gas);
+      transTemp.find('.trans-from').text(data.from);
+      transTemp.find('.trans-to').text(data.to);
+      TransRow.append(transTemp.html());
     });
   });
 
