@@ -58,345 +58,74 @@
   <div class="container-fluid">
     <div class="row">
       <div class="col-md-10 col-md-offset-1">
-        <div class="account">
-          <br>
-          <h3>You have
-            <span class="black">
-              <span id="balance"></span> BUY</span>
-          </h3>
-          <h3>Your Account
-            <span class="black" id="account"></span>
-          </h3>
-
-          <br>
-        </div>
-      </div>
-      <div class="col-md-10 col-md-offset-1">
-        <div class="options">
-          <div class="btn-group btn-group-justified" role="group" aria-label="...">
-            <div class="btn-group" role="group">
-              <button type="button" id="ag" class="btn btn-default">Add Good</button>
-            </div>
-            <div class="btn-group" role="group">
-              <button type="button" id="gl" class="btn btn-default">Good List</button>
-            </div>
-            <div class="btn-group" role="group">
-              <button type="button" id="bg" class="btn btn-default">Buy Good</button>
-            </div>
-            <div class="btn-group" role="group">
-              <button type="button" id="sm" class="btn btn-default">Send Buy</button>
-            </div>
-            <div class="btn-group" role="group">
-              <button type="button" id="trans" class="btn btn-default">Check Trans</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-10 col-md-offset-1">
         <div class="select active">
           <br>
-          <br>
-          <h1>Goods Shop</h1>
-          <h2>IPFS & Ethereum & Express</h2>
-          <br>
-          <h3 id="selecttag">Select Your Account To load your goods</h3>
-          <select id="options" name="cars" class="form-control">
-          </select>
-          <button id="submit" class="btn btn-primary">SUBMIT</button>
-          <div class="hint">
-            <strong>Hint:</strong> open the browser developer console to view any errors and warnings.</div>
-
-        </div>
-      </div>
-      <div class="col-md-10 col-md-offset-1">
-        <div class="shop">
-          <br>
-          <br>
-          <h1>Good APP</h1>
-          <br>
-          <br>
-          <h1>Account Goods List</h1>
-
-          <div class="row">
-            <div class="col-xs-12 col-sm-8 col-sm-push-2">
-              <hr/>
-              <br/>
-            </div>
-          </div>
-
-          <div id="GoodsRow" class="row">
-            <!-- Goods LOAD HERE -->
-          </div>
-
-
-          <div id="goodTemplate" style="display: none;">
-            <div class="col-sm-6 col-md-4 col-lg-4">
-              <div class="panel panel-default panel-good">
-                <div class="panel-heading">
-                  <h3 class="panel-title">Yeasy</h3>
-                </div>
-                <div class="panel-body">
-                  <img alt="140x140" data-src="holder.js/140x140" class="img-rounded img-center" style="width: 100%;" src="https://animalso.com/wp-content/uploads/2017/01/Golden-Retriever_6.jpg"
-                    data-holder-rendered="true">
-                  <br/>
-                  <br/>
-                  <strong>Name</strong>:
-                  <span class="good-name">Addidas Yeasy</span>
-                  <br/>
-                  <strong>Describtion</strong>:
-                  <span class="good-disc">The addidas newest shoes</span>
-                  <br/>
-                  <strong>Catgory</strong>:
-                  <span class="good-catg">Shoes</span>
-                  <br/>
-                  <br/>
-                  <strong>Price</strong>:
-                  <span class="good-price">**</span>
-                  <br/>
-                  <br/>
-                  <strong>Owner</strong>:
-                  <span class="good-owner">**</span>
-                  <br/>
-                  <br/>
-                  <button class="btn btn-default btn-buy" type="button" data-id="0">Buy</button>
-                </div>
-              </div>
-            </div>
-          </div>
-          <br>
-          <br>
-          <br>
-        </div>
-      </div>
-      <div class="col-md-10 col-md-offset-1">
-        <div class="addGood">
-          <br>
-          <br>
-          <h1>Add Good</h1>
-          <form method="POST" enctype="multipart/form-data" action="/addGood">
-            <div class="form-group">
-              <label for="goodName">Name</label>
-              <input type="text" class="form-control" id="goodName" name="goodName" placeholder="Good Name">
-            </div>
-            <div class="form-group">
-              <label for="goodDisc">Good Description</label>
-              <input type="text" class="form-control" id="goodDisc" name="goodDisc" placeholder="Good Description">
-            </div>
-            <div class="form-group">
-              <label for="goodCatg">Good Category</label>
-              <input type="text" class="form-control" id="goodCatg" name="goodCatg" placeholder="Good Category">
-            </div>
-            <div class="form-group">
-              <label for="goodCatg">Good Price</label>
-              <input type="text" class="form-control" id="goodPrice" name="goodPrice" placeholder="Good Price">
-            </div>
-            <div class="form-group">
-              <label for="goodImg">Good Image</label>
-              <input type="file" id="goodImg" name="goodImg">
-              <p class="help-block">Upload the Good image.</p>
-            </div>
-            <div class="form-group" id="owner">
-              <label for="goodCatg">Good Owner</label>
-              <input type="text" class="form-control" id="goodOwn" name="goodOwn">
-            </div>
-            <button type="submit" id=“addGoodB” class="btn btn-default">Add Good</button>
-          </form>
-          <br>
-          <br>
-        </div>
-      </div>
-      <div class="col-md-10 col-md-offset-1">
-        <div class="send">
-          <br>
-          <h1>Send BuyCoin</h1>
-          <div class="row">
-            <div>
-              <div class="col-md-12">
-                <br>
-                <label for="amount">Amount:</label>
-                <input type="number" id="amount" class="form-control" placeholder="e.g., 95" required></input>
-                <br>
-                <label for="receiver">To Address:</label>
-                <input type="text" id="receiver" class="form-control" placeholder="copy and paste from the list of active accounts below"
-                  required></input>
-              </div>
-              <div class="col-md-4 col-md-offset-4">
-                <br>
-                <br>
-                <button class="btn btn-primary" id="send">Send BuyCoin</button>
-              </div>
-              <br>
-              <br>
-              <span id="status"></span>
-            </div>
-          </div>
-
-
-          <br>
-          <div class="hint">
-            <strong>Hint:</strong> open the browser developer console to view any errors and warnings.</div>
-        </div>
-      </div>
-      <div class="col-md-10 col-md-offset-1">
-        <div class="buyGood">
-          <br>
-          <br>
-          <h1>Buy Good</h1>
-          <br>
-          <h3>Get Target Accout Good</h1>
+          <div class="col-md-12">
             <div class="row">
-              <div>
-                <div class="col-md-12">
-                  <label for="targetAcc">Account Address:</label>
-                  <input type="text" id="targetAcc" class="form-control" placeholder="copy and paste from the list of active accounts below"
-                    required></input>
+              <div class="col-md-1">
+              </div>
+              <div class="col-md-10">
+                <div class="jumbotron card card-block">
+                  <h2>
+                    Hello, welcome to the BuyChain!
+                  </h2>
+                  <p>
+                    This is a decentralization electric market！
+                  </p>
+                  <p>
+                    <a class="btn btn-primary btn-large" href="#">Go and look</a>
+                  </p>
                 </div>
-                <div class="col-md-4 col-md-offset-4">
-                  <br>
-                  <br>
-                  <button class="btn btn-primary" id="getGA">Get good</button>
-                </div>
+              </div>
+              <div class="col-md-1">
               </div>
             </div>
             <br>
             <br>
-            <h1>Account Goods List</h1>
-
             <div class="row">
-              <div class="col-xs-12 col-sm-8 col-sm-push-2">
-                <hr/>
-                <br/>
+              <div class="col-md-1">
               </div>
-            </div>
-
-            <div id="GoodsRowBuy" class="row">
-              <!-- Goods LOAD HERE -->
-            </div>
-
-
-            <div id="goodTemplateBuy" style="display: none;">
-              <div class="col-sm-6 col-md-6 col-lg-6">
-                <div class="panel panel-default panel-good">
-                  <div class="panel-heading">
-                    <h3 class="panel-title">Yeasy</h3>
+              <div class="col-md-10">
+                <div class="row">
+                  <div class="col-md-4">
+                    <h2>
+                      I'm shop owner!
+                    </h2>
+                    <p>
+                      Shop owner entry.
+                    </p>
+                    <p>
+                      <a class="btn" href="#">Go to page »</a>
+                    </p>
                   </div>
-                  <div class="panel-body">
-                    <img alt="140x140" data-src="holder.js/140x140" class="img-rounded img-center" style="width: 100%;" src="https://animalso.com/wp-content/uploads/2017/01/Golden-Retriever_6.jpg"
-                      data-holder-rendered="true">
-                    <br/>
-                    <br/>
-                    <strong>Name</strong>:
-                    <span class="good-name">Addidas Yeasy</span>
-                    <br/>
-                    <strong>Describtion</strong>:
-                    <span class="good-disc">The addidas newest shoes</span>
-                    <br/>
-                    <strong>Catgory</strong>:
-                    <span class="good-catg">Shoes</span>
-                    <br/>
-                    <br/>
-                    <strong>Price</strong>:
-                    <span class="good-price">**</span>
-                    <br/>
-                    <br/>
-                    <strong>Owner</strong>:
-                    <span class="good-owner">**</span>
-                    <br/>
-                    <br/>
-                    <strong>IPFS</strong>:
-                    <span class="good-ipfs">**</span>
-                    <br/>
-                    <br/>
-                    <button class="btn btn-default btn-buy" type="button">Buy</button>
+                  <div class="col-md-4">
+                    <h2>
+                      I'm a buyer!
+                    </h2>
+                    <p>
+                      Buyer entry.
+                    </p>
+                    <p>
+                      <a class="btn" href="#">Go to page »</a>
+                    </p>
+                  </div>
+                  <div class="col-md-4">
+                    <h2>
+                      I'm a third-part!
+                    </h2>
+                    <p>
+                      Third-part entry.
+                    </p>
+                    <p>
+                      <a class="btn" href="#">Go to page »</a>
+                    </p>
                   </div>
                 </div>
               </div>
-            </div>
-            <br>
-            <br>
-            <br>
-        </div>
-      </div>
-      <!-- Get Transactions -->
-      <div class="col-md-10 col-md-offset-1">
-        <div class="trans">
-          <br>
-          <br>
-          <h1>Get Transactions From Eth Blockchain</h1>
-          <br>
-          <div class="row">
-            <div>
-              <div class="col-md-12">
-                <label for="targetAcc">Transaction ID:</label>
-                <input type="text" id="targetTrans" class="form-control" placeholder="copy and paste from transaction response"
-                  required></input>
-              </div>
-              <div class="col-md-4 col-md-offset-4">
-                <br>
-                <br>
-                <button class="btn btn-primary" id="getTrans">Get Transaction Detail</button>
+              <div class="col-md-1">
               </div>
             </div>
           </div>
-          <br>
-          <br>
-          <h1>Transaction Info</h1>
-
-          <div class="row">
-            <div class="col-xs-12 col-sm-8 col-sm-push-2">
-              <hr/>
-              <br/>
-            </div>
-          </div>
-
-          <div id="TransRow" class="row">
-            <!-- Goods LOAD HERE -->
-          </div>
-
-
-          <div id="TransTemplate" style="display: none;">
-            <div class="col-sm-12 col-md-12 col-lg-12">
-              <div class="panel panel-default panel-good">
-                <div class="panel-heading">
-                  <h3 class="panel-title">Transaction ID</h3>
-                </div>
-                <div class="panel-body">
-                  <br/>
-                  <strong>Hash</strong>:
-                  <span class="trans-hash">0x627306090abab3a6e1400e9345bc60c78a8bef57</span>
-                  <br/>
-                  <strong>Block Hash</strong>:
-                  <span class="trans-blk">0xcb6f39df0d23a6e684164de5aed5e98471f9bab0cd4aeae9238f1b9656c358e1</span>
-                  <br/>
-                  <strong>Block Number</strong>:
-                  <span class="trans-blkN"></span>
-                  <br/>
-                  <br/>
-                  <strong>Gas</strong>:
-                  <span class="trans-gas"></span>
-                  <br/>
-                  <br/>
-                  <strong>From Addr</strong>:
-                  <span class="trans-from"></span>
-                  <br/>
-                  <br/>
-                  <strong>To Addr</strong>:
-                  <span class="trans-to"></span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <br>
-          <br>
-          <br>
-        </div>
-      </div>
-      <div class="col-md-10 col-md-offset-1">
-        <div id="all-accounts">
-          <h3>Accounts on the chain you can send BuyCoin to:</h3>
-          <ol>
-
-          </ol>
         </div>
       </div>
     </div>
