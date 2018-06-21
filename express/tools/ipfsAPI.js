@@ -16,6 +16,7 @@ exports.add = (buffer) =>{
         }
     })
 }
+
 exports.get = (hash) =>{
     return new Promise((resolve,reject)=>{
         try{

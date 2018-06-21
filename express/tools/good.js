@@ -3,6 +3,7 @@ var path = require('path')
 var ipfsAPI = require("./ipfsAPI")
 var goodTemp = require("../storage/goodTmpl.json")
 var goodObj = require("../storage/goods.json")
+var shop_ref = require("../storage/shop_goods.json")
 
 var getGoodsTmpl = function() {
     return goodTemp;
@@ -18,7 +19,7 @@ var getGoods = function(isCache) {
 
 }
 
-var addGoods = function(good) {
+var addBasicGoods = function(good) {
     if(goodObj.goodsHash.indexOf(good.hash))
     goodObj.goods.push(good);
     goodObj.goodsHash.push(good.hash);
@@ -35,13 +36,19 @@ module.exports.getGoodByHash = function(hash) {
     })
 }
 
-var presistGoods = function() {
-    var basePath = path.join(__dirname,'../storage/goods.json');
+var presistBasicGoods = function(shopHash) {
+    var basePath = path.join(__dirname,'../storage/',shopHash,'_basic_goods.json');
     console.log(basePath);
     fs.writeFileSync(basePath, JSON.stringify(goodObj));
 }
 
-module.exports.createGood = function(name, disc, imagePath, catg, price) {
+var presistSaleGoods = function(shopHash) {
+    var basePath = path.join(__dirname,'../storage/',shopHash,'_sale_goods.json');
+    console.log(basePath);
+    fs.writeFileSync(basePath, JSON.stringify(goodObj));
+}
+
+module.exports.createGood = function(shopHash, name, disc, imagePath, catg) {
     var tmpl = getGoodsTmpl();
     var newG;
     //First, push the image to ipfs and get the hash
@@ -55,7 +62,6 @@ module.exports.createGood = function(name, disc, imagePath, catg, price) {
         newG.descripthion = disc;
         newG.product_img = hash;
         newG.category = catg;
-        newG.price = price;
         //Check the name is exist?
         return ipfsAPI.add(Buffer.from(JSON.stringify(newG)));
     }).then(hash => {
@@ -63,14 +69,15 @@ module.exports.createGood = function(name, disc, imagePath, catg, price) {
         console.log("http://localhost:8080/ipfs/" + hash);
         //Laod into the goods json
         newG.hash = hash;
-        addGoods(newG);
-        presistGoods();
+        addBasicGoods(newG);
+        presistBasicGoods(shopHash);
         return Promise.resolve(hash);
     }).catch((err) => {
         console.log(err);
         return Promise.reject(err);
     })
 }
+
 
 module.exports.createGoodByImageReader = function(name, disc, imageBlob, catg) {
     var tmpl = getGoodsTmpl();

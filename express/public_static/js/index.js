@@ -1,6 +1,16 @@
-GoodsList = {
+MarketIndex = {
     web3Provider: null,
     contracts: {},
+    storagePath: "../../storage/",
+
+    homePage: function(){
+        
+        $.getJSON(this.storagePath.concat("config.json"), function(data){
+            var shops_hash  = data.home_index;
+            //Get the shop_list from IPFS
+
+        })
+    },
 
     init: function() {
         // Load goods.

@@ -7,8 +7,10 @@ const Web3 = require('web3');
 const truffle_connect = require('./connection/app.js');
 const bodyParser = require('body-parser');
 const goodsAPI = require('./tools/good');
+const shopsAPI = require('./tools/shop');
 const fs = require('fs');
 const helper = require('./tools/helper');
+const utils = require('./tools/util');
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -35,6 +37,18 @@ var upload = multer({ dest: 'tmp/' });
 
 
 app.use('/', express.static('public_static'));
+
+app.get('/homePage', (req, res) =>{
+  console.log("**** GET /get HomePage ****");
+  var home_hash = req.query.homeHash;
+  if(home_hash == "default"){ 
+    home_hash = utils.getConfig.home_index;
+  }
+  //Get the shop list 
+  utils.getIndexData(home_hash).then(shops =>{
+      res.send(shops);
+  });
+});
 
 app.get('/getAccounts', (req, res) => {
   console.log("**** GET /getAccounts ****");
@@ -83,6 +97,44 @@ app.get('/getGoodsList', function(req, res, next){
 app.get('/addGoodHtml', function (req, res, next) {
   var addGoodHtml = fs.readFileSync('./public_static/AddGoods.html', { encoding: 'utf8' });
   res.send(addGoodHtml);
+});
+
+app.post('/addShop', upload.single('banner'), (req, res, next) => {
+  console.log(req.body);
+  var shopInfo = req.body;
+  var shopImgFile = req.file;
+  console.log('Eth账号：%s', shopInfo.shopOwn);
+  console.log('文件类型：%s', shopImgFile.mimetype);
+  console.log('原始文件名：%s', shopImgFile.originalname);
+  console.log('文件大小：%s', shopImgFile.size);
+  console.log('文件保存路径：%s', shopImgFile.path);
+  console.log('文件字段名：%s', shopImgFile.fieldname);
+  
+  shopsAPI.createShop(shopInfo.shopName, shopInfo.shopOwn, shopImgFile.path, shopInfo.shopDisc)
+  .then(hash=>{
+    //convert the ipfs hash to eth bytes32
+    var eth_hash = helper.ipfsHashToBytes32(hash);
+    console.log("Convert to eth hash : " + eth_hash);
+    //add The shop into the eth
+    truffle_connect.addShop(eth_hash, shopInfo.shopOwn, (status)=>{
+      console.log(status);
+      res.send({ status: "ok", hashCode:hash, txid:status.tx });
+    });
+  }).catch(err =>{
+    console.log(err);
+    res.send({status:"err"});
+  });
+});
+
+
+app.get('/:shopHash/getGoods', (req, res) =>{
+  var shopHash = req.params.shopHash;
+  
+});
+
+app.post(':shopHash/putOnSale', (req, res) =>{
+  var shopHash = req.params.shopHash;
+
 });
 
 app.post('/addGood', upload.single('goodImg'), (req, res, next) => {
@@ -156,6 +208,8 @@ app.post('/getTrans', (req, res, next) =>{
   //   res.send({status: "Get Transaction info", tx:transObj});
   // });
 });
+
+
 
 app.listen(port, () => {
 
