@@ -2,61 +2,99 @@ pragma solidity ^0.4.17;
 
 import "./ConvertLib.sol";
 
-// This is just a simple example of a coin-like contract.
-// It is not standards compatible and cannot be expected to talk to other
-// coin/token contracts. If you want to create a standards-compliant
-// token, see: https://github.com/ConsenSys/Tokens. Cheers!
-
 contract GoodShop {
-    //Note: Consider that here each good just have one
-    //TODO: good should be more num
-    mapping (address => bytes32) goodsList;
-	mapping (address => uint) balances;
-	mapping (bytes32 => uint) goodPrice;
+    
+    struct Good_pro{
+        int num;
+        int price;
+        bool isOnSale;
+    }
+    
+    struct Shop{
+        // address owner;
+        mapping (bytes32 => Good_pro) good_store;// good_basic_hash => good
+        bool status;
+    }
+    
+    mapping (address => bytes32) shop_map;//add => shop_hash
+    
+    mapping (address => Shop) shops; // shop_hash => shop 
+	mapping (address => int) balances;
 
-	event Transfer(address indexed _from, address indexed _to, uint256 _value);
+    //Transfer money from A to B
+	event Transfer(address indexed _from, address indexed _to, int _value);
+	event GoodOnSale(bytes32 good_basic_hash);
 
 	function GoodShop() public {
 		balances[msg.sender] = 10000000;
 	}
 	
-	function addGoodToAddr(bytes32 goodHash, uint price) public returns(bool sufficient) {
+	function createShop(bytes32 shop_basic)public returns(bool sufficient){
+	     address owner = msg.sender;
+	     if(shops[owner].status == false){
+	        shop_map[owner] = shop_basic;
+	        shops[owner].status = true;
+	     }
+	     else return false;
+	}
+	
+	
+	function putOnSale(bytes32 goodHash, int price, int num) public returns(bool sufficient) {
 	    address owner = msg.sender;
-	    goodsList[owner] = goodHash;
-	    goodPrice[goodHash] = price;
-	   // if(goodsList[owner].length > 0){
-	   //    if(goodPrice[goodHash] != 0 && goodPrice[goodHash]==price) return false; 
-	   // }
-	   // else{
-	   //     goodsList[owner] = goodHash;
-	   // }
-	   // goodPrice[goodHash] = price;
-	    return true;
+	    if(shops[owner].status == true){
+	        mapping (bytes32 => Good_pro) good = shops[owner].good_store;
+	        if(good[goodHash].isOnSale) return false;
+	        good[goodHash].price = price;
+	        good[goodHash].num = num;
+	        good[goodHash].isOnSale = true;
+	        GoodOnSale(goodHash);
+	     }
+	     else return false;
 	}   
 	
-	function getGoodFromAddr(address _own) public view returns(bytes32){
-	    return goodsList[_own];
+	function checkGoodNum(bytes32 goodHash) public view returns(int num){
+	    address owner = msg.sender;
+	    if(shops[owner].status == true){
+	        mapping (bytes32 => Good_pro) good = shops[owner].good_store;
+	        return good[goodHash].num;
+	    }
 	}
 	
-	function getGoodPrice(bytes32 goodHash) public view returns(uint){
-	    return goodPrice[goodHash];
+	function checkGoodPrice(bytes32 goodHash) public view returns(int price){
+	    address owner = msg.sender;
+	    if(shops[owner].status == true){
+	        mapping (bytes32 => Good_pro) good = shops[owner].good_store;
+	        return good[goodHash].price;
+	    }
 	}
+	
+	function getShopBasicFromAddr() public view returns(bytes32 shop_basic){
+	    address _own = msg.sender;
+	    return shop_map[_own];
+	}
+	
+	function checkShopHash(bytes32 shop_basic) public view returns(bool sufficient){
+	    if(shops[msg.sender].status && shop_map[msg.sender] == shop_basic) return true;
+	    else return false;
+	}
+	
 	
 	function buyGood(address _from, bytes32 goodHash) public returns(bool isSuccess){
 	    address buyer = msg.sender;
 	    if(buyer == _from) return false;
-	    //get good price
-	    uint price = goodPrice[goodHash];
-	    if (balances[buyer] < price) return false;
-		balances[buyer] -= price;
-		balances[_from] += price;
-	    goodsList[buyer] = goodHash;
-		goodsList[_from] = bytes32(0);//maybe some better method?
-		Transfer(_from, buyer, price);
+	    //Get good
+	    Shop shop_cur = shops[_from];
+	    Good_pro good = shop_cur.good_store[goodHash];
+	    if(good.num <= 0 || balances[buyer] < good.price) return false;
+		balances[buyer] -= good.price;
+		balances[_from] += good.price;
+		if(good.num > 1) good.num = good.num -1;
+		else good.num = -1;
+		Transfer(_from, buyer, good.price);
 		return true;
 	}
 
-	function sendCoin(address receiver, uint amount) public returns(bool sufficient) {
+	function sendCoin(address receiver, int amount) public returns(bool sufficient) {
 		if (balances[msg.sender] < amount) return false;
 		balances[msg.sender] -= amount;
 		balances[receiver] += amount;
@@ -64,11 +102,8 @@ contract GoodShop {
 		return true;
 	}
 
-	function getBalanceInEth(address addr) public view returns(uint){
-		return ConvertLib.convert(getBalance(addr),2);
-	}
 
-	function getBalance(address addr) public view returns(uint) {
+	function getBalance(address addr) public view returns(int balance) {
 		return balances[addr];
 	}
 }

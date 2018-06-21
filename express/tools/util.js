@@ -3,8 +3,18 @@ var path = require('path')
 var ipfsAPI = require("./ipfsAPI")
 var config = require("../storage/config.json")
 
+var current_accout = "";
+
+module.exports.getCurrentAccout = function(){
+    return current_accout;
+}
+
 module.exports.getConfig = function () {
     return config;
+}
+
+module.exports.setCurrentAccount = function(account){
+    this.current_accout = account;
 }
 
 module.exports.refreshConfig = function (shops_hash) {
@@ -14,7 +24,7 @@ module.exports.refreshConfig = function (shops_hash) {
     fs.writeFileSync(basePath, JSON.stringify(config));
 }
 
-var getGoodInfoPromise = function (goodHash) {
+module.exports.getGoodInfoPromise = function (goodHash) {
     return new Promise(resolve, reject => {
         var goodData = {};
         return ipfsAPI.get(goodHash).then(buff => {
@@ -22,6 +32,7 @@ var getGoodInfoPromise = function (goodHash) {
             goodData.price = good_ori.price;
             goodData.reserveNum = good_ori.reserveNum;
             goodData.shopHash = good_ori.shopHash;
+            goodData.basicHash = good_ori.basicHash;
             return ipfsAPI.get(good_ori.basicHash);
         }).then( buff=>{
             var basic_g = JSON.parse(buff.toString('utf-8'));

@@ -38,6 +38,9 @@ var upload = multer({ dest: 'tmp/' });
 
 app.use('/', express.static('public_static'));
 
+/**
+ * Get home page data for a visitor
+ */
 app.get('/homePage', (req, res) =>{
   console.log("**** GET /get HomePage ****");
   var home_hash = req.query.homeHash;
@@ -50,6 +53,9 @@ app.get('/homePage', (req, res) =>{
   });
 });
 
+/**
+ * Get all accounts of this network
+ */
 app.get('/getAccounts', (req, res) => {
   console.log("**** GET /getAccounts ****");
   truffle_connect.start(function (answer) {
@@ -57,6 +63,14 @@ app.get('/getAccounts', (req, res) => {
   })
 });
 
+app.post('/login', (req, res) =>{
+  utils.setCurrentAccount(req.query.account);
+  res.send("success")
+});
+
+/**
+ * Get banlance of a target user
+ */
 app.post('/getBalance', (req, res) => {
   console.log("**** GET /getBalance ****");
   console.log(req.body);
@@ -72,6 +86,9 @@ app.post('/getBalance', (req, res) => {
   });
 });
 
+/**
+ * Transfer coin from A to B
+ */
 app.post('/sendCoin', (req, res) => {
   console.log("**** GET /sendCoin ****");
   console.log(req.body);
@@ -90,8 +107,29 @@ app.get('/goodsListHtml', function(req, res, next){
   res.send(goodList);
 });
 
-app.get('/getGoodsList', function(req, res, next){
+/**
+ * Get target user's shop page
+ */
+app.get('/shoplistHTML', function(req, res, next){
+  var goodList = fs.readFileSync('./public_static/goodList.html', { encoding: 'utf8' });
+  res.send(goodList);
+});
 
+/**
+ * Get target user's shop's data
+ */
+app.get('/shopsIndex', function(req, res){
+
+});
+
+/**
+ * Get target user goods data
+ */
+app.get('/getGoodsList', function(req, res, next){
+  var address = req.query.address;
+  goodsAPI.getUserGoods(address).then(results =>{
+    res.send(results);
+  })
 });
 
 app.get('/addGoodHtml', function (req, res, next) {
@@ -99,6 +137,9 @@ app.get('/addGoodHtml', function (req, res, next) {
   res.send(addGoodHtml);
 });
 
+/**
+ * Add a shop
+ */
 app.post('/addShop', upload.single('banner'), (req, res, next) => {
   console.log(req.body);
   var shopInfo = req.body;
@@ -126,7 +167,9 @@ app.post('/addShop', upload.single('banner'), (req, res, next) => {
   });
 });
 
-
+/**
+ * Get 
+ */
 app.get('/:shopHash/getGoods', (req, res) =>{
   var shopHash = req.params.shopHash;
   
@@ -165,6 +208,26 @@ app.post('/addGood', upload.single('goodImg'), (req, res, next) => {
   });
 });
 
+/**
+ * Put the target goods on the sale, save on eth
+ */
+app.post('putOnSale', (req, res) =>{
+  
+  var basic_good = req.body.basic_hash;
+  var price = req.body.price;
+  var reserveNum = req.body.num;
+  var shop_hash = req.body.shop_hash;
+  shopsAPI.refGood(shop_hash,basic_good,price,reserveNum).then(hash =>{
+    var eth_hash = helper.ipfsHashToBytes32(hash);
+    truffle_connect.putOnSale(eth_hash, price, reserveNum, utils.getCurrentAccout,(status)=>{
+      shopsAPI.exposeShops().then(result_hash =>{
+        res.send({ status: "ok", hashCode:hash, newShopsHash: result_hash, txid:status.tx }); 
+      });
+    });
+  });
+});
+
+
 app.post('/getGood', (req, res, next) =>{
   console.log(req.body);
   let currentAcount = req.body.account;
@@ -180,6 +243,9 @@ app.post('/getGood', (req, res, next) =>{
   });
 });
 
+/**
+ * Buy good 
+ */
 app.post('/buyGood', (req, res, next) => {
   console.log(req.body);
   let currentAcount = req.body.account;
@@ -194,6 +260,9 @@ app.post('/buyGood', (req, res, next) => {
   });
 });
 
+/**
+ * Get the transaction from eth
+ */
 app.post('/getTrans', (req, res, next) =>{
   console.log(req.body);
   let trans = req.body.trans;
@@ -210,6 +279,9 @@ app.post('/getTrans', (req, res, next) =>{
 });
 
 
+/**
+ * Start the http server
+ */
 
 app.listen(port, () => {
 

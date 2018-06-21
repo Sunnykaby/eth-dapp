@@ -4,6 +4,7 @@ var ipfsAPI = require("./ipfsAPI")
 var goodTemp = require("../storage/goodTmpl.json")
 var goodObj = require("../storage/goods.json")
 var shop_ref = require("../storage/shop_goods.json")
+var utils = require('../tools/util')
 
 var getGoodsTmpl = function() {
     return goodTemp;
@@ -34,6 +35,64 @@ module.exports.getGoodByHash = function(hash) {
         console.log(err);
         return Promise.reject(err);
     })
+}
+
+/**
+ * User buy good, keep to store
+ * @param {*} address 
+ * @param {*} good_hash 
+ * @param {*} price 
+ */
+module.exports.keepGoods = function(address, good_hash, price){
+    var basePath = path.join(__dirname,'../storage/',address,'_goods.json');
+    var goods = JSON.parse(fs.readFileSync(basePath));
+    if(!goods.hasOwnProperty("address")){
+        goods["address"] = address;
+        goods["goods"] = [];
+        goods["goods_hash"] = [];
+    }
+    goods.goods_hash.push(good_hash);
+    var isExist = false;
+    goods.goods.forEach(element => {
+        if(element.good_hash == good_hash){
+            element.num += 1
+            isExist = true;
+            break
+        }
+    });
+    if (!isExist) {
+        goods.goods.push({"basic_hash": good_hash, "price": price, "num": 1})
+    }
+    fs.writeFileSync(basePath, JSON.stringify(goods));
+}
+
+module.exports.getUserGoods = function(address){
+    var basePath = path.join(__dirname,'../storage/',address,'_goods.json');
+    var goods = JSON.parse(fs.readFileSync(basePath));
+    var goods_data_pro = [];
+    goods.goods_hash.forEach(element =>{
+        goods_data_pro.push(element);
+    });
+    return Promise.all(goods_data_pro).then(results =>{
+        var goods_tmp = {};
+        goods.goods.forEach(element=>{
+            goods_tmp[element.basic_hash] = element;
+        })
+        results.forEach(element =>{
+            goods_tmp[element.basicHash].name = element.name;
+            goods_tmp[element.basicHash].descripthion = element.descripthion;
+            goods_tmp[element.basicHash].product_img = element.product_img;
+            goods_tmp[element.basicHash].category = element.category;
+        })
+        goods.goods = [];
+        for(let key in goods_tmp){
+            goods.goods.push(goods_tmp[key]);
+        }
+
+        return goods;
+    })
+
+
 }
 
 var presistBasicGoods = function(shopHash) {
