@@ -7,14 +7,14 @@ var GoodShop = contract(goodshop_artifact);
 
 var curAccount = "";
 module.exports = {
-  start: function(callback) {
+  start: function (callback) {
     var self = this;
-    
+
     // Bootstrap the MetaCoin abstraction for Use.
     GoodShop.setProvider(self.web3.currentProvider);
 
     // Get the initial account balance so it can be displayed.
-    self.web3.eth.getAccounts(function(err, accs) {
+    self.web3.eth.getAccounts(function (err, accs) {
       if (err != null) {
         alert("There was an error fetching your accounts.");
         return;
@@ -30,106 +30,138 @@ module.exports = {
       callback(self.accounts);
     });
   },
-  refreshBalance: function(account, callback) {
+  refreshBalance: function (account, callback) {
     var self = this;
 
     // Bootstrap the MetaCoin abstraction for Use.
     GoodShop.setProvider(self.web3.currentProvider);
 
     var meta;
-    GoodShop.deployed().then(function(instance) {
+    GoodShop.deployed().then(function (instance) {
       meta = instance;
-      return meta.getBalance.call(account, {from: account});
-    }).then(function(value) {
-        callback(value.valueOf());
-    }).catch(function(e) {
-        console.log(e);
-        callback("Error 404");
+      return meta.getBalance.call(account, { from: account });
+    }).then(function (value) {
+      callback(value.valueOf());
+    }).catch(function (e) {
+      console.log(e);
+      callback("Error 404");
     });
   },
-  sendCoin: function(amount, sender, receiver, callback) {
+  sendCoin: function (amount, sender, receiver, callback) {
     var self = this;
 
     // Bootstrap the MetaCoin abstraction for Use.
     GoodShop.setProvider(self.web3.currentProvider);
 
     var meta;
-    GoodShop.deployed().then(function(instance) {
+    GoodShop.deployed().then(function (instance) {
       meta = instance;
-      return meta.sendCoin(receiver, amount, {from: sender});
-    }).then(function() {
+      return meta.sendCoin(receiver, amount, { from: sender });
+    }).then(function () {
       self.refreshBalance(sender, function (answer) {
         callback(answer);
       });
-    }).catch(function(e) {
+    }).catch(function (e) {
       console.log(e);
       callback("ERROR 404");
     });
   },
-  addGood: function(goodHash, price, sender, callback){
+  putOnSale: function (goodHash, price, num, sender, callback) {
     var self = this;
     GoodShop.setProvider(self.web3.currentProvider);
     var meta;
-    GoodShop.deployed().then(function(instance){
+    GoodShop.deployed().then(function (instance) {
       meta = instance;
-      return meta.addGoodToAddr(goodHash, price, {from: sender});
+      return meta.putOnSale(goodHash, price, num, { from: sender });
     }).then(status => {
       console.log(status)
       callback(status);
-    }).catch(function(e){
+    }).catch(function (e) {
       console.log(e);
       callback("ADD Goods error," + e.toString());
     });
   },
-  getGoodPrice: function(goodHash, sender, callback){
+  checkGoodNum: function (goodHash, sender, callback) {
     var self = this;
     GoodShop.setProvider(self.web3.currentProvider);
     var meta;
-    GoodShop.deployed().then(function(instance){
+    GoodShop.deployed().then(function (instance) {
       meta = instance;
-      return meta.getGoodPrice(goodHash, {from: sender});
+      return meta.checkGoodNum(goodHash, { from: sender });
+    }).then(num => {
+      console.log(num);
+      callback(num);
+    }).catch(function (e) {
+      console.log(e);
+      callback("ADD Goods error," + e.toString());
+    });
+  },
+
+  checkGoodPrice: function (goodHash, sender, callback) {
+    var self = this;
+    GoodShop.setProvider(self.web3.currentProvider);
+    var meta;
+    GoodShop.deployed().then(function (instance) {
+      meta = instance;
+      return meta.checkGoodPrice(goodHash, { from: sender });
     }).then(price => {
       console.log(price);
       callback(price);
-    }).catch(function(e){
+    }).catch(function (e) {
       console.log(e);
       callback("ADD Goods error," + e.toString());
     });
   },
 
-  getGood: function(owner, acount, callback){
+  getShopBasicFromAddr: function (sender, callback) {
     var self = this;
     GoodShop.setProvider(self.web3.currentProvider);
     var meta;
-    GoodShop.deployed().then(function(instance){
+    GoodShop.deployed().then(function (instance) {
       meta = instance;
-      return meta.getGoodFromAddr(owner, {from:acount});
-    }).then(goodHash => {
-      console.log(goodHash);
-      callback(goodHash);
-    }).catch(function(e){
+      return meta.getShopBasicFromAddr({ from: sender });
+    }).then(shop_hash => {
+      console.log(shop_hash);
+      callback(shop_hash);
+    }).catch(function (e) {
       console.log(e);
       callback("ADD Goods error," + e.toString());
     });
   },
 
-  bugGood: function(_from, goodHash, account, callback){
+  checkShopHash: function (shop_hash, sender, callback) {
     var self = this;
     GoodShop.setProvider(self.web3.currentProvider);
     var meta;
-    GoodShop.deployed().then(function(instance){
+    GoodShop.deployed().then(function (instance) {
       meta = instance;
-      return meta.buyGood(_from,goodHash, {from:account});
+      return meta.checkGoodPrice(shop_hash, { from: sender });
     }).then(status => {
       console.log(status);
       callback(status);
-    }).catch(function(e){
+    }).catch(function (e) {
       console.log(e);
       callback("ADD Goods error," + e.toString());
     });
   },
 
-  getTrans: function(transaction, callback){
+  bugGood: function (_from, goodHash, account, callback) {
+    var self = this;
+    GoodShop.setProvider(self.web3.currentProvider);
+    var meta;
+    GoodShop.deployed().then(function (instance) {
+      meta = instance;
+      return meta.buyGood(_from, goodHash, { from: account });
+    }).then(status => {
+      console.log(status);
+      callback(status);
+    }).catch(function (e) {
+      console.log(e);
+      callback("ADD Goods error," + e.toString());
+    });
+  },
+
+  getTrans: function (transaction, callback) {
     var self = this;
     console.log(transaction);
     GoodShop.setProvider(self.web3.currentProvider);

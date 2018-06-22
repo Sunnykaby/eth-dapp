@@ -167,19 +167,6 @@ app.post('/addShop', upload.single('banner'), (req, res, next) => {
   });
 });
 
-/**
- * Get 
- */
-app.get('/:shopHash/getGoods', (req, res) =>{
-  var shopHash = req.params.shopHash;
-  
-});
-
-app.post(':shopHash/putOnSale', (req, res) =>{
-  var shopHash = req.params.shopHash;
-
-});
-
 app.post('/addGood', upload.single('goodImg'), (req, res, next) => {
   console.log(req.body);
   var goodInfo = req.body;
