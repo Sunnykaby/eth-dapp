@@ -88,7 +88,8 @@ module.exports.createShop = function (name, shopOwner, bannerPath, disc) {
 var addGoodToShop = function (good, shopHash) {
     //Add into target shop cahce
     var basePath = path.join(__dirname,'../storage/',shopHash,'_sale_goods.json');
-    var sale_goods = JSON.parse(fs.readFileSync(basePath))
+    var sale_goods = JSON.parse(fs.readFileSync(basePath));
+    
     //Add into the total cache
     if (!shopGoods.hasOwnProperty(shopHash)) {
         shopGoods[shopHash] = [];

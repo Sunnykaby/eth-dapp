@@ -122,7 +122,15 @@ app.get('/shopsIndex', function(req, res){
   var is_Online = req.query.isOnline;
   var shop_hash = req.query.shopHash;
   if(is_Online&&shop_hash==""){
-    truffle_connect.getShopBasicFromAddr(utils.getCurrentAccout(), )
+    truffle_connect.getShopBasicFromAddr(utils.getCurrentAccout(), shopHash=>{
+      var ipfs_hash = helper.bytes32ToIPFSHash(shopHash);
+      console.log("IPFS hash : " + ipfs_hash);
+      goodsAPI.getGoodByHash(ipfs_hash).then(goodsObject => {
+        console.log(goodsObject);
+        //load image into the images dir
+        res.send({goodObj: goodsObject, goodHash: ipfs_hash});
+      });
+    })
   }
   
 });

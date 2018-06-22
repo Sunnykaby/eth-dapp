@@ -2,9 +2,10 @@ var fs = require("fs")
 var path = require('path')
 var ipfsAPI = require("./ipfsAPI")
 var goodTemp = require("../storage/goodTmpl.json")
-var goodObj = require("../storage/goods.json")
 var shop_ref = require("../storage/shop_goods.json")
 var utils = require('../tools/util')
+
+var goodObj = {};
 
 /**
  * User buy good, keep to store
