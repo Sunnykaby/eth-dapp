@@ -63,9 +63,22 @@ app.get('/getAccounts', (req, res) => {
   })
 });
 
+/**
+ * Login the app, and set current account
+ */
 app.post('/login', (req, res) =>{
   utils.setCurrentAccount(req.query.account);
   res.send("success")
+});
+
+/**
+ * Filter to the account info
+ */
+app.all('/', (req, res, next)=>{
+  if(utils.getCurrentAccout() == ""){
+    res.send({"status":1, "err":"Not login, account is needed."})
+  }
+  else next();
 });
 
 /**
@@ -102,24 +115,16 @@ app.post('/sendCoin', (req, res) => {
   });
 });
 
-app.get('/goodsListHtml', function(req, res, next){
-  var goodList = fs.readFileSync('./public_static/goodList.html', { encoding: 'utf8' });
-  res.send(goodList);
-});
-
-/**
- * Get target user's shop page
- */
-app.get('/shoplistHTML', function(req, res, next){
-  var goodList = fs.readFileSync('./public_static/goodList.html', { encoding: 'utf8' });
-  res.send(goodList);
-});
-
 /**
  * Get target user's shop's data
  */
 app.get('/shopsIndex', function(req, res){
-
+  var is_Online = req.query.isOnline;
+  var shop_hash = req.query.shopHash;
+  if(is_Online&&shop_hash==""){
+    truffle_connect.getShopBasicFromAddr(utils.getCurrentAccout(), )
+  }
+  
 });
 
 /**
@@ -130,11 +135,6 @@ app.get('/getGoodsList', function(req, res, next){
   goodsAPI.getUserGoods(address).then(results =>{
     res.send(results);
   })
-});
-
-app.get('/addGoodHtml', function (req, res, next) {
-  var addGoodHtml = fs.readFileSync('./public_static/AddGoods.html', { encoding: 'utf8' });
-  res.send(addGoodHtml);
 });
 
 /**
@@ -265,6 +265,31 @@ app.post('/getTrans', (req, res, next) =>{
   // });
 });
 
+
+/***************************** Get the html page ********************************************/
+
+
+
+app.get('/goodsListHtml', function(req, res, next){
+  var goodList = fs.readFileSync('./public_static/goodList.html', { encoding: 'utf8' });
+  res.send(goodList);
+});
+
+/**
+ * Get target user's shop page
+ */
+app.get('/shoplistHTML', function(req, res, next){
+  var goodList = fs.readFileSync('./public_static/goodList.html', { encoding: 'utf8' });
+  res.send(goodList);
+});
+
+app.get('/addGoodHtml', function (req, res, next) {
+  var addGoodHtml = fs.readFileSync('./public_static/AddGoods.html', { encoding: 'utf8' });
+  res.send(addGoodHtml);
+});
+
+
+/********************************  Start server ******************************************************* */
 
 /**
  * Start the http server

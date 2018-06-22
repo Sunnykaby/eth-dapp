@@ -6,44 +6,13 @@ var goodObj = require("../storage/goods.json")
 var shop_ref = require("../storage/shop_goods.json")
 var utils = require('../tools/util')
 
-var getGoodsTmpl = function() {
-    return goodTemp;
-}
-
-var getGoods = function(isCache) {
-    if (isCache) {
-        return goodObj.goods;
-    } else {
-        var goodsF = fs.readFileSync("../storage/goods.json")
-        return JSON.parse(goodsF).goods;
-    }
-
-}
-
-var addBasicGoods = function(good) {
-    if(goodObj.goodsHash.indexOf(good.hash))
-    goodObj.goods.push(good);
-    goodObj.goodsHash.push(good.hash);
-}
-
-module.exports.getGoodByHash = function(hash) {
-    return ipfsAPI.get(hash).then((buff) => {
-        let good = JSON.parse(buff.toString('utf-8'))
-        console.log(good);
-        return Promise.resolve(good);
-    }).catch((err) => {
-        console.log(err);
-        return Promise.reject(err);
-    })
-}
-
 /**
  * User buy good, keep to store
  * @param {*} address 
  * @param {*} good_hash 
  * @param {*} price 
  */
-module.exports.keepGoods = function(address, good_hash, price){
+module.exports.keepGoodsToDB = function(address, good_hash, price){
     var basePath = path.join(__dirname,'../storage/',address,'_goods.json');
     var goods = JSON.parse(fs.readFileSync(basePath));
     if(!goods.hasOwnProperty("address")){
@@ -66,7 +35,11 @@ module.exports.keepGoods = function(address, good_hash, price){
     fs.writeFileSync(basePath, JSON.stringify(goods));
 }
 
-module.exports.getUserGoods = function(address){
+/**
+ * Get user's good from Json file
+ * @param {*} address 
+ */
+module.exports.getUserGoodsFromDB = function(address){
     var basePath = path.join(__dirname,'../storage/',address,'_goods.json');
     var goods = JSON.parse(fs.readFileSync(basePath));
     var goods_data_pro = [];
@@ -88,11 +61,8 @@ module.exports.getUserGoods = function(address){
         for(let key in goods_tmp){
             goods.goods.push(goods_tmp[key]);
         }
-
         return goods;
     })
-
-
 }
 
 var presistBasicGoods = function(shopHash) {
@@ -101,13 +71,30 @@ var presistBasicGoods = function(shopHash) {
     fs.writeFileSync(basePath, JSON.stringify(goodObj));
 }
 
-var presistSaleGoods = function(shopHash) {
-    var basePath = path.join(__dirname,'../storage/',shopHash,'_sale_goods.json');
-    console.log(basePath);
-    fs.writeFileSync(basePath, JSON.stringify(goodObj));
+var addBasicGoods = function(shopHash, good) {
+    var basePath = path.join(__dirname,'../storage/',shopHash,'_basic_goods.json');
+    var goodObj = JSON.parse(fs.readFileSync())
+    if(goodObj.goodsHash.indexOf(good.hash))
+    goodObj.goods.push(good);
+    goodObj.goodsHash.push(good.hash);
 }
 
-module.exports.createGood = function(shopHash, name, disc, imagePath, catg) {
+/**
+ * Get the good template
+ */
+var getGoodsTmpl = function() {
+    return goodTemp;
+}
+
+/**
+ * Shop keeper create basic good
+ * @param {*} shopHash 
+ * @param {*} name 
+ * @param {*} disc 
+ * @param {*} imagePath 
+ * @param {*} catg 
+ */
+module.exports.createBasicGood = function(shopHash, name, disc, imagePath, catg) {
     var tmpl = getGoodsTmpl();
     var newG;
     //First, push the image to ipfs and get the hash
@@ -175,7 +162,16 @@ module.exports.createGoodByImageReader = function(name, disc, imageBlob, catg) {
     })
 }
 
-
+module.exports.getGoodByHash = function(hash) {
+    return ipfsAPI.get(hash).then((buff) => {
+        let good = JSON.parse(buff.toString('utf-8'))
+        console.log(good);
+        return Promise.resolve(good);
+    }).catch((err) => {
+        console.log(err);
+        return Promise.reject(err);
+    })
+}
 
 // console.log(getGoodsTmpl())
 
